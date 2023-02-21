@@ -211,6 +211,7 @@ La siguiente es una lista de referencias que pueden usar para complementar
 lo que se expone en esta sesión.
 
 * [Sin servidor en AWS](https://aws.amazon.com/es/serverless/?nc1=h_ls)
-* []()
-* []()
-* []()
+* [AWS Lambda](https://aws.amazon.com/es/lambda/)
+* [Carácteristicas de AWS Lambda](https://aws.amazon.com/es/lambda/features/?pg=ln&sec=hs)
+* [AWS S3](https://aws.amazon.com/es/s3/)
+* [Carácteristicas de AWS S3](https://aws.amazon.com/es/s3/features/)
