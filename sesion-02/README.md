@@ -32,8 +32,6 @@ Para poder realizar las siguientes actividades es necesario lo siguiente:
 Una vez que se ha creado el entorno cloud9, hacemos clic en `Open in Cloud9` para abrir el URl con
 el entorno de desarrollo web.
 
-![Interfaz entorno cloud9](images/aws-create-cloud9-5.png)
-
 En `Cloud9`, vamos a la `Terminal` y ahi hacemos las siguientes validaciones para ver que ya tengamos
 docker configurado y listo para usarse.
 
@@ -134,69 +132,41 @@ El proceso de arriba nos dará un URL el cual podemos acceder desde el botón `A
 
 ### Exponer un servicio API
 
-En esta actividad realizaremos un ejercicio donde 
-
-usaremos
-
-API Gateway
-DynamoDB
+En esta actividad realizaremos un ejercicio donde usaremos `AWS CloudFormation` para aprovisionar
+los diferentes servicios serverless para una API REST que usará funciones Lambda, un API Gateway
+y una base de datos noSQL con DynamoDB.
 
 #### Ejecución
+
+En esta ocasión vamos a usar el servicio de `CloudFormation` para aprovisionar de forma automática
+los servicios cloud que requerimos para exponer una API. La definición de los servicios que vamos
+a implementar se definen en un archivo `YAML`.
+
+Vamos al módulo `CloudFormation` y hacemos clic en `Crear nueva pila`, elegimos la opción de proyecto
+existente y en la parte de especificar plantilla, debemos elegir la opción de `cargar un archivo de plantilla`
+y luego en `elegir archivo` para seleccionarlo desde un directorio en la máquina local.
+
+![Crear pila Cloudformation](images/aws-create-stack-1.png)
+
+Hacemos clic en `Siguiente` y entonces damos nombre a la pila:
+
+![Crear pila Cloudformation](images/aws-create-stack-2.png)
+
+Hacemos clic en `Siguiente` y las demás opciones las dejamos con los valores predefinidos por ahora.
+
+![Crear pila Cloudformation](images/aws-create-stack-3.png)
 
 Usaremos CloudFormation para aprovisionar la infraestructura y servicios necesarios para
 nuestra aplicación serverless.
 
-index.js
-stack.yaml
+Al final en `Capacidades` debemos hacer check en `Confirmo que AWS CloudFormation podría crear recursos de IAM`,
+y finalmente hacemos clic en `Enviar`.
 
-TODO: imagen de arquitectura
-
-Lambda
-
-API LAMBDA BEDU
-
-zip
-Nodejs 12.x
-
-DynamoDB
-
-Creación de tabla user_id
-
-API Gateway
-
-Pruebas
-
-Despliegue
-
-Implementar la API
-
-etapa de implementación prod
-descripción de implementación prod
-
-Monitoreo
-
-Panel API Gateway
-
-- Count:sum
-- 5XXError:sum
-- 4XXError:sum
-- Latency: Average
-- IntegrationLatency: Average
-
-Consulta
-
-SELECT * FROM "API-LAMBA-BEDU-HelloTable-SV85A9QQK8M"
-
-Verificar
-
-Entrar a la tabla dynamodb y listar registros
+![Crear pila Cloudformation](images/aws-create-stack-4.png)
 
 #### Validación
 
-Una vez que hemos obtenido el URL del objeto, debemos verificar con nuestro navegador que la
-imagen se puede acceder.
-
-TODO: imagen de bucket creado y subir imagen.
+TODO.
 
 ## Limpieza
 
