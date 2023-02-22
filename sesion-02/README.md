@@ -136,6 +136,11 @@ En esta actividad realizaremos un ejercicio donde usaremos `AWS CloudFormation` 
 los diferentes servicios serverless para una API REST que usará funciones Lambda, un API Gateway
 y una base de datos noSQL con DynamoDB.
 
+Implementaremos la arquitectura que se describe en el siguiente diagrama:
+
+![Arquitectura Serverless](images/aws-arch-stack-1.png)
+
+
 #### Ejecución
 
 En esta ocasión vamos a usar el servicio de `CloudFormation` para aprovisionar de forma automática
@@ -154,19 +159,55 @@ Hacemos clic en `Siguiente` y entonces damos nombre a la pila:
 
 Hacemos clic en `Siguiente` y las demás opciones las dejamos con los valores predefinidos por ahora.
 
-![Crear pila Cloudformation](images/aws-create-stack-3.png)
-
-Usaremos CloudFormation para aprovisionar la infraestructura y servicios necesarios para
-nuestra aplicación serverless.
-
 Al final en `Capacidades` debemos hacer check en `Confirmo que AWS CloudFormation podría crear recursos de IAM`,
-y finalmente hacemos clic en `Enviar`.
+y finalmente hacemos clic en `Enviar`, y podremos ver como los procesos inician con el aprovisionamiento.
 
 ![Crear pila Cloudformation](images/aws-create-stack-4.png)
 
+Y al final de que se han aprovisionado los recursos vemos completado:
+
+![Crear pila Cloudformation](images/aws-create-stack-5.png)
+
+
+##### DynamoDB
+
+Ahora continuamos validando la base de datos DynamoDB:
+
+![Listar Lambdas](images/aws-list-lambdas-1.png)
+
 #### Validación
 
-TODO.
+Una vez que hemos verificado que el proceso de aprovisionamiento de los recursos con `CloudFormation` terminó exitosamente, debemos validar la configuración de cada uno de los servicio.
+
+##### Lambdas
+
+Empezamos validando la función Lambda:
+
+![Listar Lambdas](images/aws-list-lambdas-1.png)
+
+Hagamos clic sobre el nombre de la función para ver sus detalles:
+
+![Detalles Lambdas](images/aws-list-lambdas-2.png)
+
+En la parte de abajo, en la pestaña `Código fuente` veremos el código actual que se implementó con la lambda:
+
+![Código Lambdas](images/aws-code-lambdas-1.png)
+
+Ahora, debemos eliminar el código y existente y remplazarlo con el contenido del archivo [index.js](code/index.js).
+
+![Código Lambdas](images/aws-code-lambdas-2.png)
+
+Después, veremos que aparece un mensaje que dice `Changes not deployed`, para aplicarlos hacemos clic en `Deploy`.
+
+![Código Lambdas](images/aws-code-lambdas-3.png)
+
+El resultado es el código actualizado:
+
+![Código Lambdas](images/aws-code-lambdas-4.png)
+
+Más adelante continuaremos con la lambda, por ahora hasta aquí lo dejamos.
+
+
 
 ## Limpieza
 
@@ -185,3 +226,4 @@ lo que se expone en esta sesión.
 * [Carácteristicas de AWS Lambda](https://aws.amazon.com/es/lambda/features/?pg=ln&sec=hs)
 * [AWS S3](https://aws.amazon.com/es/s3/)
 * [Carácteristicas de AWS S3](https://aws.amazon.com/es/s3/features/)
+* [AWS CloudFormation](https://aws.amazon.com/es/cloudformation/)
