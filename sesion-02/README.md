@@ -50,7 +50,9 @@ En esta actividad realizaremos un ejercicio donde crearemos una función HTTP co
 #### Ejecución
 
 Para crear una función vamos al módulo de `Lambda` y hacemos clic en el botón `Crear una función`.
-Usamos la opción de `Utilizar un proyecto` y luego en información básica, en `Select blueprint` elegimos `Getting started with Lambda HTTP` basado en `nodejs14.x`, asignamos un nombre para la función y definimos un nuevo rol para la función.
+Usamos la opción de `Utilizar un proyecto` y luego en información básica, en `Select blueprint`
+elegimos `Getting started with Lambda HTTP` basado en `nodejs14.x`, asignamos un nombre para la
+función y definimos un nuevo rol para la función.
 
 ![Crear Lambda HTTP](images/aws-create-lambda-1.png)
 
@@ -59,8 +61,8 @@ endpoint público que se va a crear y advierte sobre los controles de accesos.
 
 ![Crear Lambda HTTP](images/aws-create-lambda-2.png)
 
-Y finalmente debemos hacer check en `Reconocimiento` para aceptar que la función se hará publica y sobre la facturación,
-hacemos clic en `Crear una función` para que se inicie el aprovisionamiento.
+Y finalmente debemos hacer check en `Reconocimiento` para aceptar que la función se hará publica
+y sobre la facturación, hacemos clic en `Crear una función` para que se inicie el aprovisionamiento.
 
 #### Validación
 
@@ -169,12 +171,6 @@ Y al final de que se han aprovisionado los recursos vemos completado:
 ![Crear pila Cloudformation](images/aws-create-stack-5.png)
 
 
-##### DynamoDB
-
-Ahora continuamos validando la base de datos DynamoDB:
-
-![Listar Lambdas](images/aws-list-lambdas-1.png)
-
 #### Validación
 
 Una vez que hemos verificado que el proceso de aprovisionamiento de los recursos con `CloudFormation` terminó exitosamente, debemos validar la configuración de cada uno de los servicio.
@@ -207,7 +203,80 @@ El resultado es el código actualizado:
 
 Más adelante continuaremos con la lambda, por ahora hasta aquí lo dejamos.
 
+##### DynamoDB
 
+Ahora continuamos validando la base de datos DynamoDB donde registraremos las direcciones de correo:
+
+![Listar DynamoDB](images/aws-list-dynamodb-1.png)
+
+Podemos ver la información general, y hacer clic en `Explore los elementos de la tabla` para ver el
+contenido.
+
+![Detalles DynamoDB](images/aws-list-dynamodb-2.png)
+
+##### API Gateway
+
+Continuemos validando el servicio de API Gateway con el que expondremos nuestra función Lambda.
+
+![Listar API Gateway](images/aws-list-api-gateway-1.png)
+
+Vamos a `Recursos` y ahi seleccionamos el endpoint de `POST`:
+
+![API Gateway POST](images/aws-api-gateway-post-1.png)
+
+Hacemos clic en `PRUEBAS` y luego introducimos los valores de prueba, en `{userId}` ponemos `11` y en `cuerpo de solicitud` ponemos:
+
+```json
+{
+    "email":"usuario11@api.com"
+}
+```
+
+![API Gateway POST](images/aws-api-gateway-post-2.png)
+
+Al final hacemos clic en `probar` y se debe hacer el registro en la tabla dynamodb.
+
+Debería tener un resultado como este:
+
+![API Gateway POST](images/aws-api-gateway-post-3.png)
+
+Y si exploramos el contenido de la tabla veremos algo así:
+
+![DynamoDB explorar tabla](images/aws-dynamodb-table-1.png)
+
+Ahora vamos a ver como implementar la API, vamos al menú acciones y seleccionamos:
+
+![API Gateway Deploy](images/aws-api-gateway-deploy-1.png)
+
+Ahora nos aparece el cuadro de dialogo y lo llenamos así:
+
+![API Gateway Deploy](images/aws-api-gateway-deploy-2.png)
+
+Después se mostrará la siguiente resumen de configuración:
+
+![API Gateway Deploy](images/aws-api-gateway-deploy-3.png)
+
+Ahora que ya tenemos el endpoint, hacemos un cambio en el URL, pasando el parámetro `/users/11/hello`
+
+![API Gateway Test](images/aws-api-gateway-test-1.png)
+
+Finalmente vamos a validar el funcionamienot del dashboar de monitoreo del API Gateway, vamos al módulo `CloudWatch`, luego a `Paneles` y seleccionamos la opción
+de `Paneles automatizados`.
+
+![CloudWatch Panel](images/aws-cloudwatch-dashboard-1.png)
+
+Seleccionamos el panel de `API Gateway` y vemos los detalles de las métricas que
+se exportan:
+
+![CloudWatch Panel](images/aws-cloudwatch-dashboard-1.png)
+
+Dentro de este panel, pueden observar los siguientes datos importantes:
+
+* **Count: Sum**: se refiere al número de invocaciones en el periodo definido
+* **5XXError: Sum**: se refiere a los errores de lambda respondidos por el api, en mi caso es 0 y espero que en el tuyo también.
+* **4XXError: Sum**: se refiere a todas las respuestas que regresan una ruta no encontrada, en este caso también es 0
+* **Latency: Average**:  velocidad de primer respuesta entre cliente y servidor(promedio)
+* **IntegrationLatency: Average**: velocidad de respuesta entre el API y Lambda
 
 ## Limpieza
 
