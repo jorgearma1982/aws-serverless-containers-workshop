@@ -325,7 +325,61 @@ elimina el predefinido, y se agrega el que creamos antes de efs.
 
 ![Crear EFS](images/aws-create-efs-4.png)
 
+En las políticas del sistema de archivos dejamos los parámetros predefinidos y hacemos clic en `Siguiente`. Al final se revisa y se crea el EFS.
+
+Al final el servicio queda así:
+
+![Crear EFS](images/aws-create-efs-5.png)
+
+Luego debemos entrar a los detalles del EFS, y vamos a la pestaña Redes, y ahi vemos los ID del destino del montaje disponibles:
+
+![Crear EFS](images/aws-create-efs-6.png)
+
 #### Validación
+
+Regresamos al servicio EC2, y seleccionamos nuestra instancia webserver.
+
+Luego nos conectamos por ssh a la instancia y ejecutamos los siguientes comandos:
+
+```shell
+$ sudo apt upgrade
+$ sudo ufw allow 'Apache'
+$ sudo systemctl status apache2
+```
+
+Instalación de efs-utils:
+
+```shell
+$ sudo apt-get -y install git binutils
+$ sudo git clone https://github.com/aws/efs-utils
+$ cd efs-utils
+$ ./build-deb.sh
+$ sudo apt-get -y install ./build/amazon-efs-utils*deb
+```
+
+Creamos punto de montaje:
+
+```shell
+$ cd /var/www/html
+$ mkdir efs
+$ sudo mount -t efs <nombre de DNS> efs/
+```
+
+Ahora creamos index en recurso EFS:
+
+```shell
+$ cd efs
+$ touch index.html
+$ vim index.html
+```
+
+Agregar el contenido siguiente:
+
+```html
+<h1>ESTE SITIO SE ESTA SIRVIENDO DESDE EFS</h1>
+```
+
+Guardamos.
 
 ### Crear bases de datos relacionales con AWS RDS Aurora
 
