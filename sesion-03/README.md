@@ -244,16 +244,13 @@ usando el servicio EFS de AWS.
 
 #### Ejecución
 
-Antes de crear el recurso EFS, debemos crear unos grupos de seguridad.
-
-En el módulo `EC2` vamos al menú de `Grupos de Seguridad`, y hacemos clic en el botón de
-`Crear grupo de seguridad`, y llenamos los datos de detalles básicos y las reglas de
-entrada para el primer security group, por ejemplo:
+Antes de crear el recurso EFS, debemos crear unos grupos de seguridad.  En el módulo `EC2` vamos al menú de
+`Grupos de Seguridad`, y hacemos clic en el botón de `Crear grupo de seguridad`, y llenamos los datos de
+detalles básicos y las reglas de entrada para el primer security group, por ejemplo:
 
 ![Creación SG Webserver](images/aws-create-sg-webserver-1.png)
 
-Como se ve arriba, en los detalles básicos se debe especificar el VPC, en este caso
-usamos el predeterminado.
+Como se ve arriba, en los detalles básicos se debe especificar el VPC, en este caso usamos el predeterminado.
 
 Además, podemos ver que creamos dos reglas de entrada con lo siguiente:
 
@@ -295,23 +292,48 @@ El segundo sg quedaría algo así:
 
 ![Creación SG EFS](images/aws-create-sg-efs-2.png)
 
+A continuación vamos al módulo `EC2` y luego en el panel lateral izquierdo vamos a Instancias,
+a continuación seleccionamos nuestra instancia, damos clic derecho y dentro de `Seguridad`
+elegimos `Cambiar grupos de seguridad`.
+
+![Cambiar SG EC2](images/aws-change-ec2-sg-1.png)
+
+Dentro del asistente debemos agregar el grupo de seguridad creado llamado webserver y eliminar
+el que tenga la instancia asignada. Con esto garantizamos que se publiquen los puertos elegidos.
+
+![Cambiar SG EC2](images/aws-change-ec2-sg-2.png)
+
+Y por último vamos a elegir Guardar.
+
+Ahora vamos al módulo EFS, creamos un sistema de archivos EFS, ponemos el nombre, elegimos el
+VPC y la clase Estandar, luego hacemos clic en Personalizar:
+
+![Crear EFS](images/aws-create-efs-1.png)
+
+Personalizamos la instancia estandar, sin copias de seguridad, sin transmisión de acceso para
+rafagas, y sin crifrado.
+
+![Crear EFS](images/aws-create-efs-2.png)
+
+Creamos una instancia estandar, sin copias de seguridad, sin transmisión de acceso para rafagas,
+y sin crifrado.
+
+![Crear EFS](images/aws-create-efs-3.png)
+
+Ahora se selecciona el VPC, la zona de disponibilidad y la subred, y luego el grupo de seguridad se
+elimina el predefinido, y se agrega el que creamos antes de efs.
+
+![Crear EFS](images/aws-create-efs-4.png)
+
 #### Validación
-
-TODO
-
-![Ver archivo en bucket S3](images/aws-view-s3-1.png)
 
 ### Crear bases de datos relacionales con AWS RDS Aurora
 
 En esta actividad realizaremos un ejercicio donde...
 
-![Arquitectura Serverless](images/aws-arch-stack-1.png)
-
 #### Ejecución
 
 TODO.
-
-![Crear pila Cloudformation](images/aws-create-stack-1.png)
 
 #### Validación
 
