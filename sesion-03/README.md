@@ -127,7 +127,8 @@ Al final se hace clic en `Crear una política` para terminar.
 
 ![IAM EC2](images/aws-create-ec2-iam-3.png)
 
-Ahora en `IAM` vamos al menú `Roles` y hacemos clic en `Crear rol`, y usamos las opciones de tipo de entidad `Servicio de AWS`, caso de uso `Lambda`:
+Ahora en `IAM` vamos al menú `Roles` y hacemos clic en `Crear rol`, y usamos las opciones de tipo de entidad
+`Servicio de AWS`, caso de uso `Lambda`:
 
 ![IAM EC2](images/aws-create-ec2-iam-4.png)
 
@@ -137,7 +138,8 @@ Luego en agregar permisos, debemos buscar la politica de `politica_apagado` que 
 
 Al final se define el nombre del rol `rol_apagado`, se finaliza y listo, continuamos con la función lambda.
 
-Ahora vamos al módulo `Lambda`, hacemos clic en `Crear función`, y vamos a crear una función desde cero usando lo siguientes parámetros:
+Ahora vamos al módulo `Lambda`, hacemos clic en `Crear función`, y vamos a crear una función desde cero usando
+lo siguientes parámetros:
 
 ![Lambda EC2](images/aws-create-lambda-1.png)
 
@@ -149,7 +151,8 @@ Hacemos clic en `Crear una función` para aplicar los cambios.
 
 ![Lambda EC2](images/aws-create-lambda-3.png)
 
-Ahora vamos a la pestaña de `Código` y en el editor eliminamos el código actual y lo cambiamos por el siguiente código, solo se debe sustituir los datos de la región y el id de la instancia:
+Ahora vamos a la pestaña de `Código` y en el editor eliminamos el código actual y lo cambiamos por el siguiente
+código, solo se debe sustituir los datos de la región y el id de la instancia:
 
 ```python
 import boto3
@@ -213,7 +216,8 @@ y en la siguiente ventana de detalles del destino, elegimos `API de uso frecuent
 
 ![EventBridge lambda](images/aws-create-eventbridge-5.png)
 
-Más abajo en los detalles de `Invoke` seleccionamos la función Lambda que creamos en el ejercicio anterior de apagado.
+Más abajo en los detalles de `Invoke` seleccionamos la función Lambda que creamos en el ejercicio anterior
+de apagado.
 
 ![EventBridge lambda](images/aws-create-eventbridge-6.png)
 
@@ -223,15 +227,22 @@ Al final revisamos la configuración y hacemos clic en `Crear programación` par
 
 #### Validación
 
+Una vez que se terminó el proceso de arriba para crearl a programación, debemos esperar los 5 minutos para
+comprobar que efectivamente el cron o trabajo recurrente invoca la función lambda y detiene la instancia EC2.
+
+Esto es un ejemplo de arquitectura serverless ejecutada por un evento interno de sistema, con la finalidad
+de ahorrar costos en el uso de la infraestructura de AWS.
+
+Prueba un par de veces volver a encender la instancia y mira comprueba que se cumple la regla de los 5 minutos
+de apagado, en un caso real, podríamos programar un evento que apague los servidores cada 24 horas a las
+23:00 horas y otro que los encienda a las 8:00 horas con esto ahorramos 9 horas de consumo.
+
 ### Crear sistemas de archivos distribuídos con AWS EFS
 
 En esta actividad realizaremos un ejercicio donde crearemos un sistema de archivos distribuído
 usando el servicio EFS de AWS.
 
 #### Ejecución
-
-Para crear un sistema de archivos distribuído, vamos al módulo `EFS`, 
-
 
 Antes de crear el recurso EFS, debemos crear unos grupos de seguridad.
 
