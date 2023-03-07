@@ -239,7 +239,7 @@ de apagado, en un caso real, podríamos programar un evento que apague los servi
 
 ### Crear sistemas de archivos distribuídos con AWS EFS
 
-En esta actividad realizaremos un ejercicio donde crearemos un sistema de archivos distribuído
+En esta actividad realizaremos un ejercicio donde crearemos un sistema de archivos de red distribuído
 usando el servicio EFS de AWS.
 
 #### Ejecución
@@ -337,6 +337,20 @@ Luego debemos entrar a los detalles del EFS, y vamos a la pestaña Redes, y ahi 
 
 #### Validación
 
+Nos conectamos a la instancia `Cloud9` y subiremos el archivo de la llave SSH de la instancia EC2 `webserver`.
+
+Desde la tarminal de `Cloud9`, cambiamos los permisos a la llave:
+
+```shell
+$ chmod 600 jorge-medina-webserver-m2-s3.pem
+```
+
+Ahora, hacemos la conexión al servidor EC2 `webserver`:
+
+```shell
+$ ssh -i jorge-medina-webserver-key.pem ubuntu@172.31.58.255
+```
+
 Regresamos al servicio EC2, y seleccionamos nuestra instancia webserver.
 
 Luego nos conectamos por ssh a la instancia y ejecutamos los siguientes comandos:
@@ -353,7 +367,7 @@ Instalación de efs-utils:
 $ sudo apt-get -y install git binutils
 $ sudo git clone https://github.com/aws/efs-utils
 $ cd efs-utils
-$ ./build-deb.sh
+$ sudo ./build-deb.sh
 $ sudo apt-get -y install ./build/amazon-efs-utils*deb
 ```
 
@@ -362,7 +376,8 @@ Creamos punto de montaje:
 ```shell
 $ cd /var/www/html
 $ mkdir efs
-$ sudo mount -t efs <nombre de DNS> efs/
+$ sudo mount -t efs fs-0507652098b5b1f01.efs.us-east-1.amazonaws.com efs/
+$ ls
 ```
 
 Ahora creamos index en recurso EFS:
@@ -381,17 +396,134 @@ Agregar el contenido siguiente:
 
 Guardamos.
 
+Al final:
+
+```shell
+$ cd ..
+$ sudo umount efs
+```
+
 ### Crear bases de datos relacionales con AWS RDS Aurora
 
-En esta actividad realizaremos un ejercicio donde...
+En esta actividad realizaremos un ejercicio donde crearemos una base de datos usando el servicio de
+bases de datos SQL serverless RDS Aurora, el cual el un servicio administrado por AWS, es seguro y
+escalable. Crearemos la base de datos para una instancia de `Wordpress`, luego haremos la instalación
+de wordpress integrado con una base de datos MySQL por red usando la instancia Aurora MySQL.
 
 #### Ejecución
 
-TODO.
+Vamos a hacer una instalación de la aplicación web `Wordpress` en la instancia EC2 `webserver`. Desde la
+terminal de la instancia `Cloud9` nos conectamos por ssh la instancia EC2 `webserver`:
+
+```shell
+$ ssh -i jorge-medina-webserver-key.pem ubuntu@172.31.58.255
+```
+
+**NOTA:** Estoy usando la dirección IP privada de la instancia EC2.
+
+Estando en el shell del servidor `webserver` debemos instalar en primer lugar las dependencias de software:
+
+```shell
+$ sudo apt update
+$ sudo apt install php php-mysql mysql-client
+```
+
+Clonamos el repositorio de wordpress desde github:
+
+```shell
+% cd /var/www/html
+$ sudo git clone https://github.com/WordPress/WordPress.git
+```
+
+Ahora cambiamos los permisos al directorio de trabajo para wordpress y reiniciamos el servidor web apache:
+
+```shell
+$ sudo chmod -R 777 WordPress
+$ sudo service apache2 restart
+```
+
+**IMPORTANTE:** No usar estos permisos en un ambiente de producción ya que no son los más seguros y genera
+una vulnerabilidad, solo lo hacemos por fines de laboratorio.
+
+En el módulo `EC2`, luego a `Grupos de Seguridad` y luego hacemos clic en `Crear grupo de seguridad`
+y definimos los siguientes parámetros:
+
+* Nombre: Aurora-SG
+* Descripción: Aurora-SG
+* VPC: Default
+* Regla de entrada: MySQL/Aurora, TCP, 3306, Personalizado: sg-webserver, desc; Aurora MySQL for Webserver
+
+Ahora, vamos al módulo `RDS` y hacemos clic en `Crear base de datos`, usamos las siguientes configuraciones:
+
+* Elegir un método de creación de base de datos: Creación estándar
+* Opciones del motor: Aurora (MySQL Compatible)
+* Versiones disponibles: Aurora (MySQL 5.7 ) 2.11.1
+* Plantillas: Desarrollo y pruebas
+* Identificador del clúster de base de datos: wordpress
+* Nombre de usuario maestro: admin
+* Contraseña maestra: W0rdpr3ss01.
+* Clases con ráfagas (incluye clases t): db.t3.small
+* Implementación Multi-AZ: No crear una réplica de Aurora
+* Conectividad: No se conecte a un recurso EC2 (porque ya creamos nuestro Security Group)
+* Grupo de subred de DB: Predeterminado
+* Acceso público: Si
+* Grupo de seguridad de VPC (firewall): Elegir Existente: Aurora-SG (El creado recientemente)
+
+Después de crear la instancia listamos las bases de datos abrimos el URL de la IP o nommbre DNS
+de la instancia EC2, y agregamos `/wordpress` en el path para lanzar el instalador.
+
+Verificar la ventana de confirmación de Wordpress.
+
+Pasos a seguir:
+
+Si todo sale bien, esperamos una ventana como en la imagen y damos Clic en Run the Installation.
 
 #### Validación
 
-TODO.
+Una vez que se creó la instancia RDS, debemos seleccionar la nueva instancia y en la pestaña de
+`Conectividad y seguridad`, ahi veremos el `Punto de enlace y puerto`, en este caso el valor es
+`jorge-medina-rds-wordpress-instance-1.cxilimkckchq.us-east-1.rds.amazonaws.com` con puerto `3306`.
+
+Desde el shell de la instancia EC2 webserver, hacemos una conexión con el cliente MySQL, por ejemplo:
+
+```shell
+$ mysql --host jorge-medina-rds-wordpress-instance-1.cxilimkckchq.us-east-1.rds.amazonaws.com --user admin --password
+```
+
+Ahora creamos la nueva base:
+
+```shell
+mysql> CREATE DATABASE wordpress;
+mysql> USE wordpress;
+mysql> SHOW DATABASES;
+mysql> \q
+```
+
+Después de haber creado el esquema de la base de datos wordpress en la instancia RDS Aurora continuamos
+con la instalación y configuración de la aplicación wordpress en la instancia EC2.
+
+Vamos al URL http://ip-publica-ec2-webserver/WordPress/, 
+
+En el asistente nos solitica los parámetros de conexión a la base de datos:
+
+* Database Name: wordpress
+* Username: admin
+* Password: pass
+* Database Host: jorge-medina-rds-wordpress-instance-1.cxilimkckchq.us-east-1.rds.amazonaws.com
+* Table Prefix: wp_
+
+* Site Title: Sitio con Aurora
+* Username: admin
+* Password
+* Confirm Password
+* Your Email:
+* Search engine visibility: checked
+
+Ahora hacemos clic en `Install Wordpress`.
+
+Al final del proceso dee instalación debemos configurar la contraseña para el usuario admin.
+
+Y por último, ya podemos iniciar sesión.
 
 ## Limpieza
 
@@ -409,3 +541,4 @@ lo que se expone en esta sesión.
 * [AWS Lambda](https://aws.amazon.com/es/lambda/)
 * [Carácteristicas de AWS Lambda](https://aws.amazon.com/es/lambda/features/?pg=ln&sec=hs)
 * [How do I stop and start Amazon EC2 instances at regular intervals using Lamda?](https://aws.amazon.com/premiumsupport/knowledge-center/start-stop-lambda-eventbridge/)
+* [Crear un sistema de archivos de red](https://aws.amazon.com/es/getting-started/tutorials/create-network-file-system/?pg=ln&sec=hs)
