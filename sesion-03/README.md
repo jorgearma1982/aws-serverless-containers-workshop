@@ -474,6 +474,8 @@ a la instancia RDS, y agregamos una regla de entrada con lo siguiente:
 * VPC: Default
 * Regla de entrada: MySQL/Aurora, TCP, 3306, Personalizado: ip-externa-ec2-webserver, desc; Aurora MySQL for Webserver
 
+Ahora por seguridad, ya puede eliminar la regla que abre a `0.0.0.0/0` el puerto de MySQL/Aurora.
+
 Después de crear la instancia listamos las bases de datos abrimos el URL de la IP o nommbre DNS
 de la instancia EC2, y agregamos `/wordpress` en el path para lanzar el instalador.
 
