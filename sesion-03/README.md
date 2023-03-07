@@ -445,14 +445,6 @@ $ sudo service apache2 restart
 **IMPORTANTE:** No usar estos permisos en un ambiente de producción ya que no son los más seguros y genera
 una vulnerabilidad, solo lo hacemos por fines de laboratorio.
 
-En el módulo `EC2`, luego a `Grupos de Seguridad` y luego hacemos clic en `Crear grupo de seguridad`
-y definimos los siguientes parámetros:
-
-* Nombre: Aurora-SG
-* Descripción: Aurora-SG
-* VPC: Default
-* Regla de entrada: MySQL/Aurora, TCP, 3306, Personalizado: sg-webserver, desc; Aurora MySQL for Webserver
-
 Ahora, vamos al módulo `RDS` y hacemos clic en `Crear base de datos`, usamos las siguientes configuraciones:
 
 * Elegir un método de creación de base de datos: Creación estándar
@@ -465,9 +457,22 @@ Ahora, vamos al módulo `RDS` y hacemos clic en `Crear base de datos`, usamos la
 * Clases con ráfagas (incluye clases t): db.t3.small
 * Implementación Multi-AZ: No crear una réplica de Aurora
 * Conectividad: No se conecte a un recurso EC2 (porque ya creamos nuestro Security Group)
-* Grupo de subred de DB: Predeterminado
+* Conectividad: Tipo de Red: IPv4
+* Conectividad: Virtual Private Cloud (VPC): Crear nueva VPC.
+* Conectividad: Grupo de subred de DB: Crear un nuevo grupo de subredes de base de datos.
 * Acceso público: Si
 * Grupo de seguridad de VPC (firewall): Elegir Existente: Aurora-SG (El creado recientemente)
+
+Después de crear la instancia debemos de editar el security group asociado y permitir la conexión
+al servidor EC2, usando su dirección IP externa en una nueva regla de entrada.
+
+En el módulo `EC2`, luego a `Grupos de Seguridad` y luego hacemos clic en el security group asociado
+a la instancia RDS, y agregamos una regla de entrada con lo siguiente:
+
+* Nombre: Aurora-SG
+* Descripción: Aurora-SG
+* VPC: Default
+* Regla de entrada: MySQL/Aurora, TCP, 3306, Personalizado: ip-externa-ec2-webserver, desc; Aurora MySQL for Webserver
 
 Después de crear la instancia listamos las bases de datos abrimos el URL de la IP o nommbre DNS
 de la instancia EC2, y agregamos `/wordpress` en el path para lanzar el instalador.
